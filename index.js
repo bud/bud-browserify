@@ -16,7 +16,10 @@ module.exports = plugin;
 function plugin (entry, dest, transforms, plugins) {
   return function (b) {
     var debug = !!b.params.debug;
-    var build = browserify(entry, { debug: debug });
+    var build = browserify(entry, {
+      extensions: ['.jsx'],
+      debug: debug
+    });
 
     transforms && (transforms.split(',').forEach(function (name) {
       if (!name.trim()) return;
