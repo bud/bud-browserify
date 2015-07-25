@@ -16,19 +16,21 @@ module.exports = plugin;
 function plugin (entry, dest, transforms, plugins) {
   return function (b) {
     var debug = !!b.params.debug;
-    var bundle = browserify(entry, { debug: debug }).bundle();
+    var build = browserify(entry, { debug: debug });
 
     transforms && (transforms.split(',').forEach(function (name) {
       if (!name.trim()) return;
-      bundle.plugin(require(path.join(process.cwd(), 'node_modules', name)));
+      build.transform(require(path.join(process.cwd(), 'node_modules', name)));
     }));
 
     plugins && (plugins.split(',').forEach(function (name) {
       if (!name.trim()) return;
-      bundle.plugin(require(path.join(process.cwd(), 'node_modules', name)));
+      build.plugin(require(path.join(process.cwd(), 'node_modules', name)));
     }));
 
-    bundle.on('error', b.error)
+    build
+      .bundle()
+      .on('error', b.error)
       .on('end', b.done)
       .pipe(fs.createWriteStream(dest));
   };
