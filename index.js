@@ -18,15 +18,15 @@ function plugin (entry, dest, transforms, plugins) {
     var debug = !!b.params.debug;
     var bundle = browserify(entry, { debug: debug }).bundle();
 
-    transforms.split(',').forEach(function (name) {
+    transforms && (transforms.split(',').forEach(function (name) {
       if (!name.trim()) return;
       bundle.plugin(require(path.join(process.cwd(), 'node_modules', name)));
-    });
+    }));
 
-    plugins.split(',').forEach(function (name) {
+    plugins && (plugins.split(',').forEach(function (name) {
       if (!name.trim()) return;
       bundle.plugin(require(path.join(process.cwd(), 'node_modules', name)));
-    });
+    }));
 
     bundle.on('error', b.error)
       .on('end', b.done)

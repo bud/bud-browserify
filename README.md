@@ -10,7 +10,8 @@ $ npm install bud-browserify
 
 ## Usage
 
- ```js
+```js
+var build = require('bud');
+
+build("dist/build.js", browserify("index.js", "dist/build.js"));
 ```
-
-
