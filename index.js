@@ -17,7 +17,6 @@ function plugin (options) {
   return function (b) {
     var debug = !!b.params.debug;
     var build = browserify(options.entry, {
-      extensions: ['.jsx'],
       debug: debug
     });
 
