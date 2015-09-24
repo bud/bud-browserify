@@ -16,3 +16,11 @@ var browserify = require('bud-browserify');
 
 build("dist/build.js", browserify({ entry: "index.js", output: "dist/build.js" }));
 ```
+
+## Options
+
+* entry
+* output
+* options
+* transforms
+* plugins
