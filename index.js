@@ -19,14 +19,12 @@ function plugin (options) {
       debug: !!b.params.debug
     });
 
-    options.transforms && (options.transforms.forEach(function (name) {
-      if (!name.trim()) return;
-      build.transform(require(path.join(process.cwd(), 'node_modules', name)));
+    options.transforms && (options.transforms.forEach(function (transform) {
+      build.transform(grab(transform));
     }));
 
-    options.plugins && (options.plugins.forEach(function (name) {
-      if (!name.trim()) return;
-      build.plugin(require(path.join(process.cwd(), 'node_modules', name)));
+    options.plugins && (options.plugins.forEach(function (plugin) {
+      build.plugin(grab(plugin));
     }));
 
     build
@@ -35,4 +33,9 @@ function plugin (options) {
       .on('end', b.done)
       .pipe(fs.createWriteStream(options.output));
   };
+}
+
+function grab (dependency) {
+  if (typeof dependency != "string") return dependency;
+  return require(path.join(process.cwd(), 'node_modules', dependency));
 }
