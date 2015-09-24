@@ -5,28 +5,28 @@ var path = require("path");
 plugin.build = true;
 plugin.title = 'Browserify';
 plugin.params = [
-  { name: 'Entry module', desc: 'Entry file of the NPM project that will be browserified.' },
-  { name: 'Destination file', desc: 'Path to the file to be written for output.' },
-  { name: 'Transforms', desc: 'e.g: babelify, brfs' },
-  { name: 'Plugins', desc: 'e.g: foo, bar' }
+  { name: 'Entry', desc: 'Path to the entry module.' },
+  { key: 'output', name: 'Output file',  desc: 'Path to the file to be written for output.' },
+  { name: 'Transforms', desc: 'e.g: babelify, brfs', list: true },
+  { name: 'Plugins', desc: 'e.g: foo, bar', list: true }
 ];
 
 module.exports = plugin;
 
-function plugin (entry, dest, transforms, plugins) {
+function plugin (options) {
   return function (b) {
     var debug = !!b.params.debug;
-    var build = browserify(entry, {
+    var build = browserify(options.entry, {
       extensions: ['.jsx'],
       debug: debug
     });
 
-    transforms && (transforms.split(',').forEach(function (name) {
+    options.transforms && (options.transforms.forEach(function (name) {
       if (!name.trim()) return;
       build.transform(require(path.join(process.cwd(), 'node_modules', name)));
     }));
 
-    plugins && (plugins.split(',').forEach(function (name) {
+    options.plugins && (options.plugins.forEach(function (name) {
       if (!name.trim()) return;
       build.plugin(require(path.join(process.cwd(), 'node_modules', name)));
     }));
@@ -35,6 +35,6 @@ function plugin (entry, dest, transforms, plugins) {
       .bundle()
       .on('error', b.error)
       .on('end', b.done)
-      .pipe(fs.createWriteStream(dest));
+      .pipe(fs.createWriteStream(options.output));
   };
 }

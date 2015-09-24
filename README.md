@@ -12,6 +12,7 @@ $ npm install bud-browserify
 
 ```js
 var build = require('bud');
+var browserify = require('bud-browserify');
 
-build("dist/build.js", browserify("index.js", "dist/build.js"));
+build("dist/build.js", browserify({ entry: "index.js", output: "dist/build.js" }));
 ```
