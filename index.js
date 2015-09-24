@@ -15,9 +15,8 @@ module.exports = plugin;
 
 function plugin (options) {
   return function (b) {
-    var debug = !!b.params.debug;
-    var build = browserify(options.entry, {
-      debug: debug
+    var build = browserify(options.entry, options.options || {
+      debug: !!b.params.debug
     });
 
     options.transforms && (options.transforms.forEach(function (name) {
