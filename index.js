@@ -27,11 +27,14 @@ function plugin (options) {
       build.plugin(grab(plugin));
     }));
 
+    var target = fs.createWriteStream(options.output);
+    target.on('error', b.error);
+
     build
       .bundle()
       .on('error', b.error)
       .on('end', b.done)
-      .pipe(fs.createWriteStream(options.output));
+      .pipe(target);
   };
 }
 
