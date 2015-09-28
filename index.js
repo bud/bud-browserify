@@ -4,11 +4,13 @@ var path = require("path");
 
 plugin.build = true;
 plugin.title = 'Browserify';
+plugin.hasBuiltinWatch = true;
 plugin.params = [
-  { name: 'Entry', desc: 'Path to the entry module.' },
-  { key: 'output', name: 'Output file',  desc: 'Path to the file to be written for output.' },
-  { name: 'Transforms', desc: 'e.g: babelify, brfs', list: true },
-  { name: 'Plugins', desc: 'e.g: foo, bar', list: true }
+  { title: 'Entry', desc: 'Path to the entry module.' },
+  { key: 'output', title: 'Output file',  desc: 'Path to the file to be written for output.' },
+  { title: 'Transforms', desc: 'e.g: babelify, brfs', commaList: true },
+  { title: 'Plugins', desc: 'e.g: foo, bar', commaList: true },
+  { key: 'watch', title: 'Watch for changes?', desc: 'yes/no', bool: true }
 ];
 
 module.exports = plugin;
