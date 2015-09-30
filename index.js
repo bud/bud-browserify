@@ -1,6 +1,8 @@
 var browserify = require('browserify');
+var watchify = require("watchify");
 var fs = require('fs');
 var path = require("path");
+var mix = require("mix-objects");
 
 plugin.build = true;
 plugin.title = 'Browserify';
@@ -16,27 +18,32 @@ plugin.params = [
 module.exports = plugin;
 
 function plugin (options) {
-  return function (b) {
-    var build = browserify(options.entry, options.options || {
-      debug: !!b.params.debug
-    });
+  var watching;
+  var build = browserify(mix({}, [
+    options.watch ? watchify.args : null, options.options,
+    { entries: [options.entry], debug: !!options.debug }
+  ]));
 
-    options.transforms && (options.transforms.forEach(function (transform) {
-      build.transform(grab(transform));
-    }));
+  options.transforms && (options.transforms.forEach(function (transform) {
+    build.transform(grab(transform));
+  }));
 
-    options.plugins && (options.plugins.forEach(function (plugin) {
-      build.plugin(grab(plugin));
-    }));
+  options.plugins && (options.plugins.forEach(function (plugin) {
+    build.plugin(grab(plugin));
+  }));
 
+  return function (task) {
     var target = fs.createWriteStream(options.output);
-    target.on('error', b.error);
+    var bundle = build.bundle().on('error', task.error).on('end', task.done);
 
-    build
-      .bundle()
-      .on('error', b.error)
-      .on('end', b.done)
-      .pipe(target);
+    target.on('error', task.error);
+    bundle.pipe(target);
+
+    if (options.watch && !watching) {
+      watching = true;
+      build = watchify(build);
+      build.on('update', task.run);
+    }
   };
 }
 
